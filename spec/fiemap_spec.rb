@@ -27,7 +27,6 @@ describe "File#extents" do
 
     subject { tempfile.extents }
 
-    it { p subject }
     it { is_expected.to be_a Array }
     it { expect(subject.size).to eq(2) }
 
@@ -42,10 +41,14 @@ describe File::Extent do
 
   before { tempfile.write("a" * 4096) }
 
-  subject { tempfile.extents }
+  subject { tempfile.extents.first }
 
-  it { is_expected.to be_a Array }
-  it { expect(subject.size).to eq(1) }
+  flag_methods = [:last?, :delalloc?, :encoded?, :encrypted?, :not_aligned?, :inline?, :tail?, :unwritten?, :merged?]
+  flag_methods.each do |method|
+    it "#{method} doesn't raise error" do
+      expect { subject.send(method) }.not_to raise_error
+    end
+  end
 
   after do
     tempfile.close unless tempfile.closed?
