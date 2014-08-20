@@ -6,6 +6,7 @@
 #include <linux/fiemap.h>
 
 VALUE cExtent;
+static ID id_flush;
 
 enum {
     MAX_EXTENT = 64
@@ -158,6 +159,8 @@ rb_file_extents(VALUE io)
     temp = rb_io_check_io(io);
     GetOpenFile(temp, fptr);
 
+    rb_funcall2(io, id_flush, 0, NULL);
+
     if (fstat(fptr->fd, &statinfo) < 0) {
 	rb_sys_fail_path(fptr->pathv);
     }
@@ -225,4 +228,6 @@ void Init_fiemap(void) {
     rb_define_method(cExtent, "merged?", extent_merged_p, 0);
 
     rb_define_method(rb_cFile, "extents", rb_file_extents, 0);
+
+    id_flush = rb_intern("flush");
 }
