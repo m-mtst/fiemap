@@ -6,12 +6,14 @@ class File
     private_class_method :new
 
     def inspect
-      "#<#{self.class} logical:#{self.offset} physical:#{self.physical_offset} flags:#{flags}>"
+      "#<#{self.class} logical:#{self.offset} physical:#{self.physical_offset} flags:#{flags_inspect}>"
     end
+
+    alias to_s inspect
 
     private
 
-    def flags
+    def flags_inspect
       flags = []
       flags << "last" if last?
       flags << "delalloc" if delalloc?
